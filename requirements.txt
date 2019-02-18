@@ -1,0 +1,8 @@
+Django==1.11.4
+xlwt==1.3.0
+datetime
+hashlib
+io
+json
+os
+zipfile

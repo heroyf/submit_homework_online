@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师管理</title>
+    <link rel="icon" href="/static/images/logo.png" type="image/x-icon">
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-grid.css" rel="stylesheet">
+    <link href="/static/bootstrap-fileinput/css/fileinput.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css"/>
+    <style>
+        .nav-link:hover {
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        .sidebar-sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .bt-left {
+            margin-left: 45px;
+        }
+        .alert-warning{
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+<script src="/static/bootstrap/js/jquery-3.3.1.js"></script>
+<script>
+    function student_confirm(student_id) {
+        $.ajax({
+            type: "POST",
+            url: "/s_confirm/",
+            data: {
+                "student_id": student_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data["success"]) {
+                    alert("修改成功！")
+                    window.location.reload();
+                } else {
+                    alert("已经验证无需重复验证")
+                }
+            }
+        });
+    }
+
+    function student_delete(student_id) {
+        $.ajax({
+            type: "POST",
+            url: "/s_delete/",
+            data: {
+                "student_id": student_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data["success"]) {
+                    alert("删除成功！")
+                    window.location.reload();
+                } else {
+                    alert("删除失败！")
+                }
+            }
+        });
+    }
+
+    function homework_delete(homework_id) {
+        $.ajax({
+            type: "POST",
+            url: "/del_h/",
+            data: {
+                "homework_id": homework_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data["success"]) {
+                    alert("作业删除成功！")
+                    window.location.reload();
+                } else {
+                    alert("作业删除失败！")
+                }
+            }
+        });
+    }
+</script>
+<div>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+        <a class="navbar-brand col-md-auto mr-0" href="/t_profile/">
+            姓名：{{ teacher.name }}&nbsp;&nbsp;&nbsp;
+            管理的班级：
+            {% if manage_classrooms %}
+                {% for classroom in manage_classrooms %}
+                    {{ classroom }}
+                {% endfor %}
+            {% else %}
+                无
+            {% endif %}
+            工号：{{ teacher.teacher_id }}
+            {% if message %}
+                <span class="alert alert-warning" role="alert">{{ message }}</span>
+            {% endif %}
+            &nbsp;</a>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <button type="button" class="btn btn-outline-info" onclick="location.href='/tlogout/'">退出登录</button
+{#                <a class="nav-link" href="/tlogout/">退出登录</a>#}
+            </li>
+        </ul>
+    </nav>
+    {% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="nav flex-column nav-pills col-sm-2 sidebar-sticky" id="v-pills-tab" role="tablist"
+                 aria-orientation="vertical" style="background-color: #F8F9FA">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/t_profile/" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true"><i
+                        class="fa fa-home">总览</i></a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/a_students/" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="false">
+                    <i class="fa fa-bar-chart">评分统计</i></a>
+                <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="/t_get_excel/" role="tab"
+                   aria-controls="v-pills-messages" aria-selected="false">
+                    <i class="fa fa-download">成绩汇总下载</i></a>
+                <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="/s_manage/" role="tab"
+                   aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fa fa-cog">学生管理</i></a>
+                <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="/t_cp/" role="tab"
+                   aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fa fa-user-o">修改密码</i></a>
+                <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="/add_h/" role="tab"
+                   aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fa fa-upload">发布作业</i></a>
+            </div>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+                <div class="chartjs-size-monitor"
+                     style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                    <div class="chartjs-size-monitor-expand"
+                         style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                        <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                    </div>
+                    <div class="chartjs-size-monitor-shrink"
+                         style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                        <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                    </div>
+                </div>
+                {% block content %}
+                    <div style="padding-top:10px;padding-left:5px;padding-right:5px">
+                        <h3 style="float:left;">我要批改的</h3>
+                        <table class="table">
+                            <tr>
+                                <th>已发布的作业</th>
+                                <th>截止日期</th>
+                                <th>提交进度</th>
+                                <th>提交数目</th>
+                                <th>所有已提交批量下载</th>
+                                <th>待批改</th>
+                                <th>所有待批改批量下载</th>
+                                <th>作业删除</th>
+                            </tr>
+                            {% for h in homeworklist %}
+                                <tr>
+                                    <td>{{ h.name }}</td>
+                                    <td>{{ h.cutoff }}</td>
+                                    {% if h.can_submit %}
+                                        {% if h.late %}
+                                            <td>可补交</td>
+                                        {% else %}
+                                            <td>提交中</td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td>已关闭</td>
+                                    {% endif %}
+                                    <td>{{ h.mine }}份</td>
+                                    <td>
+                                        <button type="button" onclick="location.href='/t-z/?homework_id={{ h.id }}'"
+                                                class="btn  btn-warning bt-left">下载
+                                        </button>
+                                    </td>
+                                    <td>{{ h.to_score }}份
+                                    <td>
+                                        <button type="button"
+                                                onclick="location.href='/t-z/?to_score=true&homework_id={{ h.id }}'"
+                                                class="btn  btn-success bt-left">下载
+                                        </button>
+                                    </td>
+                                <td>
+                                    <button type="button"
+                                                onclick="homework_delete('{{ h.id }}')"
+                                                class="btn  btn-danger">删除
+                                        </button>
+                                </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    </main>
+                {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+</div>
+</body>
+</html>

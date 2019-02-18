@@ -1,0 +1,40 @@
+{% extends "teacher_profile.html" %}
+{% block content %}
+<div style="padding-top:10px;padding-left:5px;padding-right:5px">
+    <h3 style="float:left;">学生管理</h3>
+    <table class="table">
+        <tr>
+            <th>学号</th>
+            <th>班级</th>
+            <th>姓名</th>
+            <th>验证状态</th>
+            <th>验证</th>
+            <th>删除学生</th>
+        </tr>
+        {% for s in students %}
+            <tr>
+                <td style="vertical-align: middle">
+                    {{ s.student_id }}
+                </td>
+                <td style="vertical-align: middle">{{ s.classroom }}</td>
+                <td style="vertical-align: middle">{{ s.name }}</td>
+                {% if  s.has_confirmed %}
+                    <td style="vertical-align: middle">√</td>
+                {% else %}
+                    <td style="vertical-align: middle;color:#FF0200">X</td>
+                {% endif %}
+                <td style="vertical-align: middle">
+                    <button type="button" class="btn btn-primary "
+                            onclick="student_confirm('{{ s.student_id }}')">验证
+                    </button>
+                </td>
+                <td style="vertical-align: middle">
+                    <button type="button" class="btn btn-danger"
+                            onclick="student_delete('{{ s.student_id }}')">删除
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布作业系统</title>
+    <link rel="icon" href="/static/images/logo.png" type="image/x-icon">
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-grid.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css"/>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-md-auto mr-0" href="/t_profile/">
+        姓名：{{ teacher.name }}&nbsp;&nbsp;&nbsp;
+        管理的班级：
+        {% if manage_classrooms %}
+            {% for classroom in manage_classrooms %}
+                {{ classroom }}
+            {% endfor %}
+        {% else %}
+            无
+        {% endif %}
+        工号：{{ teacher.teacher_id }}
+        {% if message %}
+            <span class="alert alert-warning" role="alert">{{ message }}</span>
+        {% endif %}
+        &nbsp;</a>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="/tlogout/">退出</a>
+        </li>
+    </ul>
+</nav>
+<div style="padding-top:15vh;text-align:center;width: 100vw;">
+    <img src="/static/images/ujs2.png" style="margin-left: auto;margin-right: auto">
+</div>
+<div class="container">
+    <div class="col-md-4 offset-md-4">
+        <form class='form-register' action="/add_h/" method="post">
+            {% csrf_token %}
+            <h2 class="text-center">发布作业</h2>
+            {% if message_add_homework %}
+                <div class="alert alert-success"><a href="/t_profile/">{{ message_add_homework }}</a></div>
+            {% endif %}
+            <div class="form-group">
+                {{ add_homework_form.name }}
+            </div>
+            <div class="form-group">
+                {{ add_homework_form.classroom }}
+            </div>
+            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                {{ add_homework_form.cutoff }}
+                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+            <div class="form-group" style="position:relative;top:2rem">
+                <button type="reset" class="btn btn-default">重置</button>
+                <button type="submit" class="btn btn-primary float-right">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker(
+            {
+                format: 'YYYY/MM/DD HH:mm'
+            }
+        );
+    });
+</script>
+</body>
+</html>

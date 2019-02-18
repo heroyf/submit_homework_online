@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+    <link rel="icon" href="/static/images/logo.png" type="image/x-icon">
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-grid.css" rel="stylesheet">
+    <link href="/static/bootstrap-fileinput/css/fileinput.css" rel="stylesheet">
+</head>
+<body>
+<script src="/static/bootstrap/js/jquery-3.3.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/fileinput.js"></script>
+<script src="/static/bootstrap-fileinput/js/locales/zh.js"></script>
+<script>
+    function submit_score(submitId) {
+        var score = $("#" + submitId + "_score").val();
+        var comment = $("#" + submitId + "_comment").val();
+        $.ajax({
+            type: "POST",
+            url: "/score/",
+            data: {
+                "submit_id": submitId,
+                "score": score,
+                "comment": comment,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function (data) {
+                document.getElementById(submitId + "_score").value = "";
+                document.getElementById(submitId + "_comment").value = "";
+                if (data["success"]) {
+                    $("#" + submitId + "_now").text(data["score"]);
+                    $("#" + submitId + "_teacher").text(data["teacher"])
+                    alert("评分成功！")
+                } else {
+                    alert("评分失败！")
+                }
+            }
+        });
+    }
+</script>
+<div>
+    <div style="padding-top:2vh;padding-left:5vw;padding-right:5vw">
+        <h3 style="float:left;">学生信息</h3>
+        <h3><a href="/a_students/" style="float: right;">退出</a></h3>
+    </div>
+    <div style="padding-top:8vh;padding-left:5vw;padding-right:5vw">
+        <h4 style="float:left;">
+            姓名：{{ student.name }}&nbsp;&nbsp;&nbsp;学院：{{ student.classroom }}&nbsp;&nbsp;&nbsp;学号：{{ student.student_id }}</h4>
+        <table class="table">
+            <tr>
+                <th>作业</th>
+                <th>提交时间</th>
+                <th>类型</th>
+                <th>分数</th>
+                <th>评分人</th>
+                <th>提交</th>
+                <th>评分</th>
+                <th>反馈</th>
+                <th></th>
+            </tr>
+            {% for h in homeworks %}
+                <tr>
+                    <td style="vertical-align: middle">{{ h.name }}</td>
+                    <td style="vertical-align: middle">{{ h.submit_time }}</td>
+                    <td style="vertical-align: middle">
+                        {% if h.late %}
+                            补交
+                        {% endif %}
+                    </td>
+                    <td id="{{ h.submit_id }}_now" style="vertical-align: middle">{{ h.score }}</td>
+                    <td id="{{ h.submit_id }}_teacher" style="vertical-align: middle">
+                        {% if h.scored %}
+                            {{ h.teacher_name }}
+                        {% else %}
+                            ——
+                        {% endif %}
+                    </td>
+                    <td style="vertical-align: middle">
+                        <a href="/t_download/?student_id={{ student.student_id }}&homework_id={{ h.id }}">
+                            {{ h.file }}
+                        </a>
+                    </td>
+                    <td style="width: 10vw;vertical-align: middle" class="text-center">
+                        <input id="{{ h.submit_id }}_score" type="text" class="align-left" placeholder="分数" ></input>
+                    </td>
+                    <td style="width: 20vw;vertical-align: middle" class="text-center">
+                        <textarea id="{{ h.submit_id }}_comment" style="width: 20vw" class="center"
+                                  placeholder="作业评价"></textarea>
+                    </td>
+                    <td style="width: 5vw;vertical-align: middle">
+                        <button type="button" class="btn btn-primary fa-pull-right"
+                                onclick="submit_score('{{ h.submit_id }}')">提交
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>

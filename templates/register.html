@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生注册页面</title>
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-grip.css" rel="stylesheet">
+</head>
+<body>
+<div style="padding-top:15vh;text-align:center;width: 100vw;">
+    <img src="/static/images/ujs.png" style="width: 10vw;height: 10vw;margin-left: auto;margin-right: auto" >
+</div>
+<div class="container">
+    <div class="col-md-4 offset-md-4">
+        <form class='form-register' action="/register/" method="post">
+            {% csrf_token %}
+            <h2 class="text-center">欢迎注册</h2>
+            {% if message %}
+                <div class="alert alert-warning">{{ message }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{ register_form.student_id.label_tag }}
+                {{ register_form.student_id }}
+            </div>
+            <div class="form-group">
+                {{ register_form.classroom.label_tag }}
+                {{ register_form.classroom }}
+            </div>
+            <div class="form-group">
+                {{ register_form.name.label_tag }}
+                {{ register_form.name }}
+            </div>
+            <div class="form-group">
+                {{ register_form.password1.label_tag }}
+                {{ register_form.password1 }}
+            </div>
+            <div class="form-group">
+                {{ register_form.password2.label_tag }}
+                {{ register_form.password2 }}
+            </div>
+            <button type="reset" class="btn btn-default">重置</button>
+            <button type="submit" class="btn btn-primary float-right">提交</button>
+        </form>
+    </div>
+</div>
+<hr/>
+<div style="text-align:center;">
+    <a class="text-center" href="/">已有账户？登录</a>
+</div>
+</body>
+</html>

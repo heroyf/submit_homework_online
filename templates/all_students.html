@@ -1,0 +1,67 @@
+{% extends "teacher_profile.html" %}
+{% block content %}
+    <div style="padding-top:10px;padding-left:5px;padding-right:5px">
+            <div>
+                <h3 style="float:left;">所有学生</h3>
+                <form class="form-inline float-right" method="POST">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="search" placeholder="学生学号" aria-label="Search" name="query">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜索</button>
+                </form>
+            </div>
+        <div>
+            <table class="table">
+                <tr>
+                    <th>学号</th>
+                    <th>班级</th>
+                    <th>姓名</th>
+                    {% for h in homeworklist %}
+                        <th>{{ h.name }}</th>
+                    {% endfor %}
+                </tr>
+                {% for s in studentlist %}
+                    <tr>
+                        <td style="vertical-align: middle">
+                            {% if not s.has_confirmed %}
+                                {{ s.student_id }}
+                            {% else %}
+                                <a href="/o_student/?student_id={{ s.student_id }}">{{ s.student_id }}</a>
+                            {% endif %}
+                        </td>
+                        <td style="vertical-align: middle">{{ s.classroom }}</td>
+                        {% if s.has_confirmed %}
+                            <td style="vertical-align: middle">{{ s.name }}</td>
+                        {% else %}
+                            <td style="vertical-align: middle;color: red">{{ s.name }}(未通过验证)</td>
+                        {% endif %}
+                        {% for score in s.scores %}
+                            <td style="vertical-align: middle">{{ score }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div style="padding-top:20px">
+            <h3 style="float:left;">未提交人员</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">作业名</th>
+                    {% for classroom in manage_classrooms %}
+                        <th scope="col">{{ classroom }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for homework,students in not_submit_dict.items %}
+                    <tr>
+                        <th scope="row">{{ homework }}</th>
+                        <td>{{ students }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
